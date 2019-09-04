@@ -1,48 +1,34 @@
-import React, {useState} from 'react';
-import './App.css';
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
+import React from 'react';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-const CREATE_USER = gql`
-  mutation CreateUser($username: String!, $password: String!) {
-    createUser(username: $username, password: $password) {
-      body
-    }
-  }
-`
-const LOGIN = gql`
-  mutation UserLogin($username: String!, $password: String!) {
-    userLogin(username: $username, password: $password) {
-      body
-    }
-  }
-`
+import Users from './users'
+import Login from './login'
+import Signup from './signup'
+
 
 function App() {
-  const [username, setUsername] = useState("")
-  const [password, setpassword] = useState("")
-
-  const [createUser] = useMutation(CREATE_USER, {onCompleted(data){
-    console.log(data)
-  }})
-
-  const [login] = useMutation(LOGIN, {onCompleted(data){
-    console.log(data)
-  }})
-
   return (
-      <div className="App">
-        <input value={username} onChange={(e) => setUsername(e.target.value)}/>
-        <input value={password} onChange={(e) => setpassword(e.target.value)}/>
-        <button onClick={() => createUser({variables: {username, password}})}>
-          Create
-        </button>
-        <input value={username} onChange={(e) => setUsername(e.target.value)}/>
-        <input value={password} onChange={(e) => setpassword(e.target.value)}/>
-        <button onClick={() => login({variables: {username, password}})}>
-          Login
-        </button>
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/login/">Login</Link>
+            </li>
+            <li>
+              <Link to="/create/">Create User</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <Route path="/" exact component={Users} />
+        <Route path="/create/" component={Signup} />
+        <Route path="/login/" component={Login} />
       </div>
+    </Router>
   );
 }
 
