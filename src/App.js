@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-import Users from './users'
+import Chats from './chats'
 import Login from './login'
 import Signup from './signup'
+import Chat from './chat'
 
 
 function App() {
@@ -24,9 +25,10 @@ function App() {
           </ul>
         </nav>
 
-        <Route path="/" exact component={Users} />
+        <Route path="/" exact component={Chats} />
         <Route path="/create/" component={Signup} />
         <Route path="/login/" component={Login} />
+        <Route path="/chats/:id" component={Chat} />
       </div>
     </Router>
   );
