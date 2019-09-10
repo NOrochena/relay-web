@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
 import gql from 'graphql-tag';
-import { useQuery, useSubscription } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { useMutation } from '@apollo/react-hooks';
 
 const GET_CHAT = gql`
     query Chat($id: ID!) {
         chat(id: $id) {
+            id
             messages {
                 id
                 content
@@ -29,9 +30,14 @@ const CREATE_MESSAGE = gql`
     }
 `
 const NEW_MESSAGE = gql`
-  subscription MessageWasPosted($chatId: ID!) {
-    messageWasPosted(chatId: $chatId) {
+  subscription newMessage($chat: String!) {
+    newMessage(chat: $chat) {
         id
+        content
+        __typename
+        user {
+            username
+        }
     }
   }
 `
@@ -49,17 +55,17 @@ const Chat = props => {
 
     subscribeToMore({
         document: NEW_MESSAGE,
-        variables: {chatId},
+        variables: {chat: chatId},
         updateQuery: (prev, {subscriptionData}) => {
-            console.log("trigger")
             if (!subscriptionData) return prev;
-            const newFeedItem = subscriptionData.data.messageWasPosted
-            console.log('trigger')
+            const newFeedItem = subscriptionData.data.newMessage
+            if (prev.chat.messages.length > 0 && prev.chat.messages[prev.chat.messages.length-1].id === newFeedItem.id) return prev
             return Object.assign({}, prev, {
-                entry: {
-                    messages: [newFeedItem, ...prev.entry.messages]
+                chat: {
+                    ...prev.chat,
+                    messages: [...prev.chat.messages, newFeedItem]
                 }
-            })
+            }) 
         }
     })
 

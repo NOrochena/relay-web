@@ -14,11 +14,34 @@ const GET_CHATS = gql`
     }
 `
 
+const NEW_CHATS = gql`
+  subscription {
+    newChat {
+      id
+      user {
+          username
+      }
+    }
+  }
+`
+
 const Users = () => {
-    const {error, loading, data} = useQuery(GET_CHATS)
+    const {error, loading, data, subscribeToMore} = useQuery(GET_CHATS)
 
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
+
+    subscribeToMore({
+        document: NEW_CHATS,
+        updateQuery: (prev, {subscriptionData}) => {
+            if (!subscriptionData.data) return prev;
+            const newFeedItem = subscriptionData.data.newChat;
+            if (prev.chats.length > 0 && prev.chats[prev.chats.length-1].id === newFeedItem.id) return prev
+            return Object.assign({}, prev, {
+                  chats: [ ...prev.chats, newFeedItem]
+              });
+        }
+    })
 
     return (
         <ul>

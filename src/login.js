@@ -10,14 +10,16 @@ const LOGIN = gql`
   }
 `
 
-const Login = () => {
+const Login = (props) => {
     const [username, setUsername] = useState("")
     const [password, setpassword] = useState("")
   
     const [login] = useMutation(LOGIN, {onCompleted(data){
-      console.log(data.userLogin.body)
       localStorage.setItem('token', data.userLogin.body)
+      window.location.assign("/")
     }})
+
+    console.log(props)
   
     return (
         <div>
