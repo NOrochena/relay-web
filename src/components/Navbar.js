@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import gql from 'graphql-tag';
-import { useQuery } from '@apollo/react-hooks';
 import { useLazyQuery } from '@apollo/react-hooks';
 
 const CURRENT_USER = gql`
