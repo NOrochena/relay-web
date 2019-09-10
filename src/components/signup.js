@@ -24,6 +24,7 @@ const Signup = () => {
           <div className="column"></div>
 
           <div className="column">
+            <h1 className="title">Signup</h1>
             <div className="field">
               <label className="label">Username</label>
               <div className="control">
@@ -49,7 +50,7 @@ const Signup = () => {
             </div>
 
             <div className="control">
-              <button onClick={() => createUser({variables: {username, password}})} className="button is-primary">Submit</button>
+              <button onClick={() => createUser({variables: {username, password}})} className="button is-primary">Signup</button>
             </div>
           </div>
 
