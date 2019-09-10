@@ -7,9 +7,11 @@ const GET_CHAT = gql`
     query Chat($id: ID!) {
         chat(id: $id) {
             id
+            name
             messages {
                 id
                 content
+                createdAt
                 user {
                     username
                 }
@@ -23,6 +25,7 @@ const CREATE_MESSAGE = gql`
         createMessage(chatId: $chatId, content: $content) {
             id
             content
+            createdAt
             user {
                 username
             }
@@ -34,6 +37,7 @@ const NEW_MESSAGE = gql`
     newMessage(chat: $chat) {
         id
         content
+        createdAt
         __typename
         user {
             username
@@ -70,12 +74,46 @@ const Chat = props => {
     })
 
     return (
-        <div>
-            {data.chat.messages.map(message => (
-                <div key={message.id}>{message.content} - {message.user.username}</div>
-            ))}
-            <input value={content} onChange={(e) => setContent(e.target.value)}/>
-            <button onClick={() => createMessage({variables: {content, chatId}})}>Submit</button>
+        <div className="columns">
+            <div className="column"></div>
+            <div className="column">
+                <section class="hero">
+                    <div class="hero-body">
+                        <div class="container">
+                            <h1 class="title">
+                                {data.chat.name}
+                            </h1>
+                        </div>
+                    </div>
+                </section>
+
+                <ul>
+                {data.chat.messages.map(message => (
+                    <li key={message.id}>
+                        <p className="is-medium content">{message.user.username}: {message.content} | {message.createdAt}</p>
+                    </li>
+                ))}
+                </ul>
+
+                <hr/>
+                <div className="field is-grouped">
+                    <p className="control is-expanded">
+                        <input 
+                            value={content} 
+                            className="input" 
+                            type="text" 
+                            placeholder="Enter Message"
+                            onChange={(e) => setContent(e.target.value)}
+                        />
+                    </p>
+                    <p className="control">
+                        <button className="button is-info" onClick={() => {createMessage({variables: {content, chatId}}); setContent("")}}>
+                        Add Message
+                        </button>
+                    </p>
+                </div>
+            </div>
+            <div className="column"></div>
         </div>
     )
 }
