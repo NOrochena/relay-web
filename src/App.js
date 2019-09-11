@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
-import Chats from './chats'
+import Chats from './components/chats'
 import Login from './components/login'
 import Signup from './components/signup'
-import Chat from './chat'
+import Chat from './components/chat'
 import Navbar from './components/Navbar'
 
 function App() {

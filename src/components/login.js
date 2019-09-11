@@ -24,7 +24,7 @@ const Login = (props) => {
           <div className="column"></div>
 
           <div className="column">
-            <h1 className="title">Signup</h1>
+            <h1 className="title">Login</h1>
             <div className="field">
               <label className="label">Username</label>
               <div className="control">

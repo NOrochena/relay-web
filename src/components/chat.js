@@ -1,7 +1,9 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
 import { useMutation } from '@apollo/react-hooks';
+import moment from 'moment'
+
 
 const GET_CHAT = gql`
     query Chat($id: ID!) {
@@ -54,6 +56,15 @@ const Chat = props => {
     })
     const [createMessage] = useMutation(CREATE_MESSAGE)
 
+    const messagesEndRef = useRef(null)
+
+    const scrollToBottom = () => {
+      if (!messagesEndRef.current) return
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+
+    useEffect(scrollToBottom)
+
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
 
@@ -77,23 +88,36 @@ const Chat = props => {
         <div className="columns">
             <div className="column"></div>
             <div className="column">
-                <section class="hero">
-                    <div class="hero-body">
-                        <div class="container">
-                            <h1 class="title">
+                <section className="hero">
+                    <div className="hero-body">
+                        <div className="container">
+                            <h1 className="title">
                                 {data.chat.name}
                             </h1>
                         </div>
                     </div>
                 </section>
 
-                <ul>
                 {data.chat.messages.map(message => (
-                    <li key={message.id}>
-                        <p className="is-medium content">{message.user.username}: {message.content} | {message.createdAt}</p>
-                    </li>
+                        <div key={message.id}>
+                            <nav className="level">
+                                <div className="level-left">
+                                    <div className="level-item">
+                                        <div className="is-medium content"><strong>{message.user.username}</strong></div>
+                                    </div>
+                                </div>
+                                <div className="level-right">
+                                    <div className="level-item">
+                                        <div className="is-small content"> {timeDisplay(new Date(message.createdAt))}</div>
+                                    </div>
+                                </div>
+                            </nav>
+                            <blockquote>
+                                {message.content}
+                            </blockquote>
+                            <hr />
+                        </div>
                 ))}
-                </ul>
 
                 <hr/>
                 <div className="field is-grouped">
@@ -107,15 +131,26 @@ const Chat = props => {
                         />
                     </p>
                     <p className="control">
-                        <button className="button is-info" onClick={() => {createMessage({variables: {content, chatId}}); setContent("")}}>
+                        <button 
+                            className="button is-info" 
+                            onClick={() => {createMessage({
+                                variables: {content, chatId}}); 
+                                setContent("");
+                                scrollToBottom() 
+                            }}>
                         Add Message
                         </button>
                     </p>
                 </div>
+                <div ref={messagesEndRef} />
             </div>
             <div className="column"></div>
         </div>
     )
+}
+
+function timeDisplay(date) {
+    return moment(date).format("MM/DD/YY [at] h:mm:ss a")
 }
 
 export default Chat
